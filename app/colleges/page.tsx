@@ -23,6 +23,9 @@ export default function CollegesPage() {
   const [sort, setSort] = useState("");
   const [saved, setSaved] = useState<number[]>([]);
 
+  // ⭐ NEW: compare selection
+  const [selected, setSelected] = useState<number[]>([]);
+
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (!user) router.push("/login");
@@ -71,6 +74,7 @@ export default function CollegesPage() {
   return (
     <div className="flex min-h-screen bg-gray-100 text-black">
 
+      {/* LEFT FILTER PANEL */}
       <div className="w-1/4 bg-white p-5 border-r">
         <h2 className="text-lg font-bold mb-4">Filters</h2>
 
@@ -118,12 +122,29 @@ export default function CollegesPage() {
         </button>
       </div>
 
+      {/* RIGHT CONTENT */}
       <div className="w-3/4 p-6">
         <h1 className="text-2xl font-bold mb-4">Find Colleges</h1>
+
+        {/* ⭐ NEW COMPARE BUTTON */}
+        <button
+          onClick={() => {
+            if (selected.length !== 2) {
+              alert("Select exactly 2 colleges");
+              return;
+            }
+            router.push(`/compare?id1=${selected[0]}&id2=${selected[1]}`);
+          }}
+          className="bg-purple-600 text-white px-4 py-2 rounded mb-4"
+        >
+          Compare
+        </button>
 
         <table className="w-full bg-white rounded-lg overflow-hidden shadow">
           <thead>
             <tr className="bg-gray-200 text-left">
+              {/* ⭐ NEW COLUMN */}
+              <th className="p-3">Select</th>
               <th className="p-3">Name</th>
               <th className="p-3">Location</th>
               <th className="p-3">Fees</th>
@@ -139,6 +160,26 @@ export default function CollegesPage() {
                 onClick={() => router.push(`/colleges/${college.id}`)}
                 className="border-b hover:bg-gray-50 cursor-pointer"
               >
+                {/* ⭐ CHECKBOX */}
+                <td
+                  className="p-3"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selected.includes(college.id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelected([...selected, college.id]);
+                      } else {
+                        setSelected(
+                          selected.filter((id) => id !== college.id)
+                        );
+                      }
+                    }}
+                  />
+                </td>
+
                 <td className="p-3 text-blue-600 hover:underline">
                   {college.name}
                 </td>
