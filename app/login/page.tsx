@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API = "https://college-backend-ruwx.onrender.com";
+
 export default function LoginPage() {
   const router = useRouter();
 
@@ -19,7 +21,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/login", {
+      const res = await fetch(`${API}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -31,8 +33,6 @@ export default function LoginPage() {
       });
 
       const data = await res.json();
-
-      console.log("LOGIN RESPONSE:", data); // DEBUG
 
       if (data.success) {
         localStorage.setItem("user", JSON.stringify(data.user));
@@ -55,7 +55,7 @@ export default function LoginPage() {
     }
 
     try {
-      const res = await fetch("http://localhost:5000/register", {
+      const res = await fetch(`${API}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -81,9 +81,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-
       <div className="bg-white border p-8 rounded-2xl w-full max-w-sm shadow-xl">
-
         <h1 className="text-2xl font-bold mb-6 text-center">
           Login / Register
         </h1>
@@ -94,13 +92,12 @@ export default function LoginPage() {
           </p>
         )}
 
-        {/* FIXED INPUTS */}
         <input
           type="email"
           value={email}
           placeholder="Enter email"
           onChange={(e) => setEmail(e.target.value)}
-          className="border border-gray-300 bg-white text-black p-3 w-full mb-4 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border p-3 w-full mb-4 rounded-lg"
         />
 
         <input
@@ -108,7 +105,7 @@ export default function LoginPage() {
           value={password}
           placeholder="Enter password"
           onChange={(e) => setPassword(e.target.value)}
-          className="border border-gray-300 bg-white text-black p-3 w-full mb-5 rounded-lg placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border p-3 w-full mb-5 rounded-lg"
         />
 
         <div className="flex gap-3">
@@ -133,7 +130,6 @@ export default function LoginPage() {
         >
           ← Back to Home
         </button>
-
       </div>
     </div>
   );

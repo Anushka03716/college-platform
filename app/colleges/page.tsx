@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+const API = "https://college-backend-ruwx.onrender.com";
+
 type College = {
   id: number;
   name: string;
@@ -21,31 +23,25 @@ export default function CollegesPage() {
   const [sort, setSort] = useState("");
   const [saved, setSaved] = useState<number[]>([]);
 
-  /* 🔐 Protect route */
   useEffect(() => {
     const user = localStorage.getItem("user");
-    if (!user) {
-      router.push("/login");
-    }
+    if (!user) router.push("/login");
   }, [router]);
 
-  /* 📥 Fetch colleges */
   useEffect(() => {
-    fetch("http://localhost:5000/colleges")
+    fetch(`${API}/colleges`)
       .then((res) => res.json())
       .then((data) => setColleges(data))
       .catch((err) => console.error(err));
   }, []);
 
-  /* 📍 Unique locations */
   const locations = useMemo(
     () => Array.from(new Set(colleges.map((c) => c.location))),
     [colleges]
   );
 
-  /* ❤️ Save */
   const handleSave = async (id: number) => {
-    await fetch("http://localhost:5000/save", {
+    await fetch(`${API}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -58,7 +54,6 @@ export default function CollegesPage() {
     );
   };
 
-  /* 🔍 Filter */
   let filtered = colleges.filter((c) => {
     return (
       c.name.toLowerCase().includes(search.toLowerCase()) &&
@@ -67,7 +62,6 @@ export default function CollegesPage() {
     );
   });
 
-  /* 📊 Sort */
   if (sort === "fees_low") {
     filtered = [...filtered].sort((a, b) => a.fees - b.fees);
   } else if (sort === "rating") {
@@ -77,11 +71,9 @@ export default function CollegesPage() {
   return (
     <div className="flex min-h-screen bg-gray-100 text-black">
 
-      {/* Sidebar */}
       <div className="w-1/4 bg-white p-5 border-r">
         <h2 className="text-lg font-bold mb-4">Filters</h2>
 
-        {/* Search */}
         <input
           type="text"
           placeholder="Search college..."
@@ -89,7 +81,6 @@ export default function CollegesPage() {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        {/* Location */}
         <select
           className="border p-2 w-full mb-4 rounded"
           onChange={(e) => setLocation(e.target.value)}
@@ -100,7 +91,6 @@ export default function CollegesPage() {
           ))}
         </select>
 
-        {/* Fees */}
         <input
           type="number"
           placeholder="Max Fees"
@@ -108,7 +98,6 @@ export default function CollegesPage() {
           onChange={(e) => setMaxFees(e.target.value)}
         />
 
-        {/* Sort */}
         <select
           className="border p-2 w-full mb-4 rounded"
           onChange={(e) => setSort(e.target.value)}
@@ -118,7 +107,6 @@ export default function CollegesPage() {
           <option value="rating">Top Rated</option>
         </select>
 
-        {/* Logout */}
         <button
           onClick={() => {
             localStorage.removeItem("user");
@@ -130,12 +118,8 @@ export default function CollegesPage() {
         </button>
       </div>
 
-      {/* Main Table */}
       <div className="w-3/4 p-6">
-
-        <h1 className="text-2xl font-bold mb-4">
-          Find Colleges
-        </h1>
+        <h1 className="text-2xl font-bold mb-4">Find Colleges</h1>
 
         <table className="w-full bg-white rounded-lg overflow-hidden shadow">
           <thead>
@@ -155,18 +139,14 @@ export default function CollegesPage() {
                 onClick={() => router.push(`/colleges/${college.id}`)}
                 className="border-b hover:bg-gray-50 cursor-pointer"
               >
-                {/* ✅ Clickable name */}
-                <td className="p-3 font-medium text-blue-600 hover:underline">
+                <td className="p-3 text-blue-600 hover:underline">
                   {college.name}
                 </td>
 
                 <td className="p-3">{college.location}</td>
-
                 <td className="p-3">₹{college.fees}</td>
-
                 <td className="p-3">⭐ {college.rating}</td>
 
-                {/* 🔥 Prevent redirect on dropdown */}
                 <td
                   className="p-3"
                   onClick={(e) => e.stopPropagation()}
@@ -186,9 +166,7 @@ export default function CollegesPage() {
         </table>
 
         {filtered.length === 0 && (
-          <p className="mt-4 text-red-500">
-            No colleges found
-          </p>
+          <p className="mt-4 text-red-500">No colleges found</p>
         )}
       </div>
     </div>

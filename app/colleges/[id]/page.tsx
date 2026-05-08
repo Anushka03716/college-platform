@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 
+const API = "https://college-backend-ruwx.onrender.com";
+
 type College = {
   id: number;
   name: string;
@@ -26,9 +28,8 @@ export default function CollegeDetail() {
   const [newReview, setNewReview] = useState("");
   const [newRating, setNewRating] = useState(5);
 
-  // Fetch college
   useEffect(() => {
-    fetch("http://localhost:5000/colleges")
+    fetch(`${API}/colleges`)
       .then((res) => res.json())
       .then((data) => {
         const found = data.find((c: College) => c.id === Number(id));
@@ -36,14 +37,12 @@ export default function CollegeDetail() {
       });
   }, [id]);
 
-  // 📥 Fetch reviews for this college
   useEffect(() => {
-    fetch(`http://localhost:5000/reviews/${id}`)
+    fetch(`${API}/reviews/${id}`)
       .then((res) => res.json())
       .then((data) => setReviews(data));
   }, [id]);
 
-  // ⭐ Average rating
   const avgRating =
     reviews.length > 0
       ? (
@@ -52,9 +51,8 @@ export default function CollegeDetail() {
         ).toFixed(1)
       : "No ratings";
 
-  // ❤️ Save college
   const saveCollege = async () => {
-    await fetch("http://localhost:5000/save", {
+    await fetch(`${API}/save`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +63,6 @@ export default function CollegeDetail() {
     alert("Saved!");
   };
 
-  // ➕ Add review
   const addReview = async () => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
 
@@ -79,7 +76,7 @@ export default function CollegeDetail() {
       return;
     }
 
-    await fetch("http://localhost:5000/add-review", {
+    await fetch(`${API}/add-review`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -94,8 +91,7 @@ export default function CollegeDetail() {
 
     setNewReview("");
 
-    // refresh reviews
-    const res = await fetch(`http://localhost:5000/reviews/${id}`);
+    const res = await fetch(`${API}/reviews/${id}`);
     const data = await res.json();
     setReviews(data);
   };
@@ -105,17 +101,15 @@ export default function CollegeDetail() {
   return (
     <div className="p-6 max-w-4xl mx-auto bg-white text-black min-h-screen">
 
-      {/* Back */}
       <button
         onClick={() => router.push("/colleges")}
-        className="mb-4 text-blue-400 underline"
+        className="mb-4 text-blue-500 underline"
       >
         ← Back to Colleges
       </button>
 
-      {/* College Info */}
       <h1 className="text-3xl font-bold mb-2">{college.name}</h1>
-      <p className="text-black-300">{college.location}</p>
+      <p>{college.location}</p>
 
       <p className="mt-3">Fees: ₹{college.fees}</p>
       <p>Rating: {college.rating}</p>
@@ -123,14 +117,13 @@ export default function CollegeDetail() {
 
       <button
         onClick={saveCollege}
-        className="bg-red-500 px-4 py-2 rounded mb-6"
+        className="bg-red-500 text-white px-4 py-2 rounded mb-6"
       >
         Save College
       </button>
 
-      {/* Static Section (optional) */}
       <h2 className="text-2xl font-bold mt-6 mb-2">Courses Offered</h2>
-      <ul className="list-disc ml-6 text-black">
+      <ul className="list-disc ml-6">
         <li>B.Tech (Computer Science)</li>
         <li>B.Tech (Mechanical)</li>
         <li>M.Tech</li>
@@ -141,27 +134,25 @@ export default function CollegeDetail() {
       <p>Average Package: ₹10–20 LPA</p>
       <p>Placement Rate: 85%</p>
 
-      {/* Reviews Section */}
       <h2 className="text-2xl font-bold mt-8 mb-4">Reviews</h2>
 
       {reviews.length === 0 ? (
         <p>No reviews yet</p>
       ) : (
         reviews.map((r, i) => (
-          <div key={i} className="bg-white text-black p-3 rounded mb-2">
+          <div key={i} className="bg-gray-100 p-3 rounded mb-2">
             <p>{r.review}</p>
             <p className="text-sm text-gray-600">⭐ {r.rating}</p>
           </div>
         ))
       )}
 
-      {/* ➕ Add Review */}
       <div className="mt-6">
         <textarea
           placeholder="Write your review..."
           value={newReview}
           onChange={(e) => setNewReview(e.target.value)}
-          className="w-full p-3 border border-gray-300 rounded mb-3 text-black bg-white"
+          className="w-full p-3 border rounded mb-3"
         />
 
         <input
@@ -170,14 +161,14 @@ export default function CollegeDetail() {
           max="5"
           value={newRating}
           onChange={(e) => setNewRating(Number(e.target.value))}
-          className="p-2 text-black rounded mb-2"
+          className="p-2 rounded mb-2"
         />
 
         <br />
 
         <button
           onClick={addReview}
-          className="bg-green-500 px-4 py-2 rounded"
+          className="bg-green-500 text-white px-4 py-2 rounded"
         >
           Submit Review
         </button>

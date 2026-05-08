@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+const API = "https://college-backend-ruwx.onrender.com";
+
 type Review = {
   id: number;
   email: string;
@@ -22,10 +24,9 @@ export default function ReviewPage() {
       ? JSON.parse(localStorage.getItem("user") || "{}")
       : {};
 
-  // 📥 Fetch reviews
   const fetchReviews = async () => {
     try {
-      const res = await fetch("http://localhost:5000/reviews");
+      const res = await fetch(`${API}/reviews`);
       const data = await res.json();
       setReviews(data);
     } catch (err) {
@@ -37,9 +38,7 @@ export default function ReviewPage() {
     fetchReviews();
   }, []);
 
-  // 📝 Submit review
   const handleSubmit = async () => {
-    // 🔐 LOGIN CHECK (IMPORTANT)
     if (!user.email) {
       alert("Please login first");
       return;
@@ -53,7 +52,7 @@ export default function ReviewPage() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/add-review", {
+      const res = await fetch(`${API}/add-review`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +74,7 @@ export default function ReviewPage() {
         setReview("");
         setRating(5);
 
-        fetchReviews(); // refresh
+        fetchReviews();
       } else {
         alert("Failed to submit review");
       }
@@ -94,14 +93,12 @@ export default function ReviewPage() {
         Write a Review
       </h1>
 
-      {/* 👤 Show user */}
       {user.email && (
         <p className="text-center text-sm text-gray-600 mb-4">
           Logged in as: <span className="font-semibold">{user.email}</span>
         </p>
       )}
 
-      {/* 📝 Form */}
       <div className="max-w-xl mx-auto bg-white p-6 rounded-xl shadow">
 
         <input
@@ -140,7 +137,6 @@ export default function ReviewPage() {
         </button>
       </div>
 
-      {/*  Reviews List */}
       <div className="max-w-3xl mx-auto mt-10">
 
         <h2 className="text-2xl font-bold mb-4">
@@ -153,10 +149,7 @@ export default function ReviewPage() {
           </p>
         ) : (
           reviews.map((r) => (
-            <div
-              key={r.id}
-              className="bg-white p-4 mb-4 rounded-xl shadow"
-            >
+            <div key={r.id} className="bg-white p-4 mb-4 rounded-xl shadow">
               <h3 className="font-semibold text-lg">
                 {r.college_name}
               </h3>
