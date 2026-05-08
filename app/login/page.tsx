@@ -92,21 +92,21 @@ export default function LoginPage() {
           </p>
         )}
 
-        <input
-          type="email"
-          value={email}
-          placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-3 w-full mb-4 rounded-lg"
-        />
+    <input
+      type="email"
+      placeholder="Enter email"
+      value={email}
+      onChange={(e) => setEmail(e.target.value)}
+      className="border border-gray-300 bg-white text-black p-3 w-full mb-4 rounded-lg placeholder-gray-500"
+    />
 
-        <input
-          type="password"
-          value={password}
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-3 w-full mb-5 rounded-lg"
-        />
+    <input
+      type="password"
+      placeholder="Enter password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      className="border border-gray-300 bg-white text-black p-3 w-full mb-5 rounded-lg placeholder-gray-500"
+    />
 
         <div className="flex gap-3">
           <button
